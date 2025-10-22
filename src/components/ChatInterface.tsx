@@ -140,15 +140,22 @@ export const ChatInterface = ({ selectedTopic }: ChatInterfaceProps) => {
   };
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+    <div className="flex flex-col h-full bg-background">
+      <div className="flex-1 overflow-y-auto p-6 space-y-6">
         {messages.length === 0 && (
-          <div className="flex flex-col items-center justify-center h-full text-center p-8">
-            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center mb-4 shadow-primary">
-              <Sparkles className="w-8 h-8 text-white" />
+          <div className="flex flex-col items-center justify-center h-full text-center p-8 animate-scale-in">
+            <div className="relative mb-6">
+              <div className="absolute inset-0 bg-gradient-to-br from-primary to-secondary opacity-50 blur-2xl animate-glow-pulse"></div>
+              <div className="relative w-24 h-24 rounded-3xl glass-strong p-2">
+                <div className="w-full h-full rounded-2xl bg-gradient-to-br from-primary via-secondary to-accent flex items-center justify-center animate-gradient-shift" style={{ backgroundSize: '200% 200%' }}>
+                  <Sparkles className="w-12 h-12 text-white animate-pulse" />
+                </div>
+              </div>
             </div>
-            <h3 className="text-xl font-semibold mb-2">Olá! Eu sou a Soph 👋</h3>
-            <p className="text-muted-foreground max-w-md">
+            <h3 className="text-3xl font-bold mb-3 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+              Olá! Eu sou a Soph 👋
+            </h3>
+            <p className="text-lg text-muted-foreground max-w-md leading-relaxed">
               Sua agente virtual de negócios. Estou aqui para ajudar você a crescer seu empreendimento!
             </p>
           </div>
@@ -157,28 +164,47 @@ export const ChatInterface = ({ selectedTopic }: ChatInterfaceProps) => {
         {messages.map((msg, idx) => (
           <div
             key={idx}
-            className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+            className={`flex gap-3 ${msg.role === "user" ? "justify-end" : "justify-start"} animate-slide-in-up`}
           >
+            {msg.role === "assistant" && (
+              <div className="flex-shrink-0">
+                <div className="w-10 h-10 rounded-xl glass-strong p-1.5">
+                  <div className="w-full h-full rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center animate-glow-pulse">
+                    <Sparkles className="w-5 h-5 text-white" />
+                  </div>
+                </div>
+              </div>
+            )}
             <div
-              className={`max-w-[80%] rounded-2xl px-4 py-3 ${
+              className={`max-w-[75%] rounded-2xl px-5 py-4 ${
                 msg.role === "user"
-                  ? "bg-gradient-to-br from-primary to-primary-glow text-white shadow-primary"
-                  : "bg-card border border-border text-foreground"
+                  ? "bg-gradient-to-br from-primary via-secondary to-accent text-white shadow-primary animate-gradient-shift"
+                  : "glass-strong text-foreground"
               }`}
-              style={{ transition: "var(--transition-smooth)" }}
+              style={{ 
+                transition: "var(--transition-smooth)",
+                ...(msg.role === "user" && { backgroundSize: '200% 200%' })
+              }}
             >
-              <p className="whitespace-pre-wrap">{msg.content}</p>
+              <p className="whitespace-pre-wrap leading-relaxed">{msg.content}</p>
             </div>
           </div>
         ))}
         
         {isLoading && (
-          <div className="flex justify-start">
-            <div className="bg-card border border-border rounded-2xl px-4 py-3">
+          <div className="flex gap-3 justify-start animate-slide-in-up">
+            <div className="flex-shrink-0">
+              <div className="w-10 h-10 rounded-xl glass-strong p-1.5">
+                <div className="w-full h-full rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center animate-glow-pulse">
+                  <Sparkles className="w-5 h-5 text-white" />
+                </div>
+              </div>
+            </div>
+            <div className="glass-strong rounded-2xl px-5 py-4">
               <div className="flex gap-2">
-                <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: "0ms" }}></div>
-                <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: "150ms" }}></div>
-                <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: "300ms" }}></div>
+                <div className="w-3 h-3 bg-primary rounded-full animate-bounce" style={{ animationDelay: "0ms" }}></div>
+                <div className="w-3 h-3 bg-secondary rounded-full animate-bounce" style={{ animationDelay: "150ms" }}></div>
+                <div className="w-3 h-3 bg-accent rounded-full animate-bounce" style={{ animationDelay: "300ms" }}></div>
               </div>
             </div>
           </div>
@@ -187,23 +213,28 @@ export const ChatInterface = ({ selectedTopic }: ChatInterfaceProps) => {
         <div ref={messagesEndRef} />
       </div>
 
-      <div className="p-4 border-t border-border bg-background">
-        <div className="flex gap-2">
-          <Textarea
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder="Digite sua mensagem..."
-            className="resize-none min-h-[60px] max-h-[120px]"
-            disabled={isLoading}
-          />
+      <div className="p-6 border-t border-border/50 glass-strong">
+        <div className="flex gap-3">
+          <div className="relative flex-1 group">
+            <div className="absolute inset-0 bg-gradient-to-r from-primary via-secondary to-accent opacity-0 group-focus-within:opacity-100 blur-xl transition-opacity duration-500"></div>
+            <Textarea
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="Digite sua mensagem..."
+              className="relative resize-none min-h-[70px] max-h-[140px] glass border-2 focus:border-primary/50 transition-all duration-300"
+              disabled={isLoading}
+            />
+          </div>
           <Button
             onClick={() => sendMessage()}
             disabled={!input.trim() || isLoading}
             size="icon"
-            className="h-[60px] w-[60px] bg-gradient-to-br from-primary to-primary-glow shadow-primary hover:shadow-lg transition-all"
+            className="relative h-[70px] w-[70px] bg-gradient-to-br from-primary via-secondary to-accent shadow-primary hover:shadow-2xl transition-all duration-300 group overflow-hidden"
+            style={{ backgroundSize: '200% 200%' }}
           >
-            <Send className="w-5 h-5" />
+            <span className="absolute inset-0 bg-gradient-to-br from-accent via-secondary to-primary opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ backgroundSize: '200% 200%' }}></span>
+            <Send className="relative w-6 h-6 z-10 group-hover:scale-110 transition-transform" />
           </Button>
         </div>
       </div>

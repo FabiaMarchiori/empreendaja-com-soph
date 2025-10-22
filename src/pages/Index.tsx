@@ -67,90 +67,116 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-secondary/5">
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      {/* Grid Pattern Background */}
+      <div className="absolute inset-0 grid-pattern opacity-50"></div>
+      
+      {/* Gradient Mesh Background */}
+      <div className="absolute inset-0" style={{ background: 'var(--gradient-mesh)' }}></div>
+      
       {!showTopics ? (
-        <div className="flex flex-col items-center justify-center min-h-screen p-6 text-center">
-          <div className="max-w-2xl space-y-8 animate-in fade-in duration-700">
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-primary to-secondary opacity-20 blur-3xl"></div>
-              <div className="relative w-32 h-32 mx-auto mb-6 rounded-full bg-gradient-to-br from-primary via-primary-glow to-secondary shadow-2xl flex items-center justify-center">
-                <Sparkles className="w-16 h-16 text-white animate-pulse" />
+        <div className="relative flex flex-col items-center justify-center min-h-screen p-6 text-center">
+          <div className="max-w-2xl space-y-8">
+            {/* Animated Avatar with Complex Gradients */}
+            <div className="relative animate-float">
+              <div className="absolute inset-0 bg-gradient-to-r from-primary via-secondary to-accent opacity-30 blur-3xl animate-glow-pulse"></div>
+              <div className="relative w-40 h-40 mx-auto mb-6 rounded-3xl glass-strong p-2 shadow-2xl animate-scale-in">
+                <div className="w-full h-full rounded-2xl bg-gradient-to-br from-primary via-secondary to-accent flex items-center justify-center animate-gradient-shift" style={{ backgroundSize: '200% 200%' }}>
+                  <Sparkles className="w-20 h-20 text-white animate-pulse" />
+                </div>
               </div>
+              
+              {/* Floating Particles */}
+              <div className="absolute top-0 left-1/4 w-2 h-2 rounded-full bg-primary animate-float" style={{ animationDelay: '0s', animationDuration: '4s' }}></div>
+              <div className="absolute top-1/4 right-1/4 w-3 h-3 rounded-full bg-secondary animate-float" style={{ animationDelay: '0.5s', animationDuration: '3s' }}></div>
+              <div className="absolute bottom-1/4 left-1/3 w-2 h-2 rounded-full bg-accent animate-float" style={{ animationDelay: '1s', animationDuration: '5s' }}></div>
             </div>
 
-            <div className="space-y-4">
-              <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-primary via-primary-glow to-secondary bg-clip-text text-transparent">
+            {/* Title with Gradient Text */}
+            <div className="space-y-4 animate-slide-in-up" style={{ animationDelay: '0.2s' }}>
+              <h1 className="text-6xl md:text-7xl font-black bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent glow-text animate-gradient-shift" style={{ backgroundSize: '200% 200%' }}>
                 EmpreendeJá
               </h1>
-              <p className="text-2xl md:text-3xl font-semibold text-foreground">
-                com Soph
+              <p className="text-3xl md:text-4xl font-bold text-foreground">
+                com <span className="text-secondary">Soph</span>
               </p>
-              <p className="text-lg md:text-xl text-muted-foreground max-w-xl mx-auto">
+              <p className="text-xl md:text-2xl text-muted-foreground max-w-xl mx-auto leading-relaxed">
                 Sua agente virtual de negócios que vai te ajudar a estruturar e crescer seu empreendimento
               </p>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center pt-8">
+            {/* CTA Buttons with Enhanced Effects */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center pt-8 animate-slide-in-up" style={{ animationDelay: '0.4s' }}>
               <Button
                 size="lg"
                 onClick={() => setShowTopics(true)}
-                className="text-lg px-8 py-6 bg-gradient-to-r from-primary to-primary-glow shadow-primary hover:shadow-lg transition-all"
+                className="relative text-lg px-10 py-7 bg-gradient-to-r from-primary via-secondary to-accent shadow-primary hover:shadow-2xl transition-all font-bold group overflow-hidden"
+                style={{ backgroundSize: '200% 200%' }}
               >
-                Começar Agora
+                <span className="relative z-10">Começar Agora</span>
+                <div className="absolute inset-0 bg-gradient-to-r from-accent via-secondary to-primary opacity-0 group-hover:opacity-100 transition-opacity" style={{ backgroundSize: '200% 200%' }}></div>
               </Button>
               <Button
                 size="lg"
                 variant="outline"
                 onClick={() => navigate("/chat")}
-                className="text-lg px-8 py-6 border-2"
+                className="text-lg px-10 py-7 border-2 glass hover:glass-strong font-bold"
               >
                 Chat Livre
               </Button>
             </div>
 
-            <div className="grid grid-cols-3 gap-8 pt-12 max-w-md mx-auto">
-              <div className="text-center">
-                <div className="text-3xl font-bold text-primary">100%</div>
-                <div className="text-sm text-muted-foreground">Gratuito</div>
+            {/* Animated Statistics Cards */}
+            <div className="grid grid-cols-3 gap-6 pt-12 max-w-md mx-auto animate-slide-in-up" style={{ animationDelay: '0.6s' }}>
+              <div className="glass-strong rounded-2xl p-4 hover:scale-105 transition-transform">
+                <div className="text-4xl font-black bg-gradient-to-br from-primary to-primary-glow bg-clip-text text-transparent">100%</div>
+                <div className="text-xs text-muted-foreground font-medium mt-1">Gratuito</div>
               </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-secondary">24/7</div>
-                <div className="text-sm text-muted-foreground">Disponível</div>
+              <div className="glass-strong rounded-2xl p-4 hover:scale-105 transition-transform">
+                <div className="text-4xl font-black bg-gradient-to-br from-secondary to-secondary-glow bg-clip-text text-transparent">24/7</div>
+                <div className="text-xs text-muted-foreground font-medium mt-1">Disponível</div>
               </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-primary">7+</div>
-                <div className="text-sm text-muted-foreground">Tópicos</div>
+              <div className="glass-strong rounded-2xl p-4 hover:scale-105 transition-transform">
+                <div className="text-4xl font-black bg-gradient-to-br from-accent to-primary bg-clip-text text-transparent">7+</div>
+                <div className="text-xs text-muted-foreground font-medium mt-1">Tópicos</div>
               </div>
             </div>
           </div>
         </div>
       ) : (
-        <div className="container mx-auto px-4 py-12 max-w-6xl">
-          <div className="text-center mb-12 space-y-4">
-            <h2 className="text-4xl font-bold">Como posso te ajudar hoje?</h2>
-            <p className="text-xl text-muted-foreground">
+        <div className="relative container mx-auto px-4 py-16 max-w-6xl">
+          <div className="text-center mb-16 space-y-4 animate-slide-in-up">
+            <h2 className="text-5xl font-black bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+              Como posso te ajudar hoje?
+            </h2>
+            <p className="text-2xl text-muted-foreground">
               Escolha um tópico ou inicie um chat livre com a Soph
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-            {topics.map((topic) => (
-              <TopicCard
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+            {topics.map((topic, index) => (
+              <div 
                 key={topic.id}
-                icon={topic.icon}
-                title={topic.title}
-                description={topic.description}
-                onClick={() => handleTopicClick(topic.id)}
-              />
+                className="animate-scale-in"
+                style={{ animationDelay: `${index * 0.1}s` }}
+              >
+                <TopicCard
+                  icon={topic.icon}
+                  title={topic.title}
+                  description={topic.description}
+                  onClick={() => handleTopicClick(topic.id)}
+                />
+              </div>
             ))}
           </div>
 
-          <div className="text-center">
+          <div className="text-center animate-slide-in-up" style={{ animationDelay: '0.8s' }}>
             <Button
               variant="outline"
               size="lg"
               onClick={() => navigate("/chat")}
-              className="border-2"
+              className="border-2 glass hover:glass-strong text-lg px-8 py-6 font-bold"
             >
               Ou inicie um chat livre
             </Button>

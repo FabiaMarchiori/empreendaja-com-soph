@@ -12,16 +12,35 @@ export const TopicCard = ({ icon: Icon, title, description, onClick }: TopicCard
   return (
     <Card
       onClick={onClick}
-      className="p-6 cursor-pointer transition-all hover:shadow-lg hover:scale-105 border-2 hover:border-primary group"
-      style={{ transition: "var(--transition-smooth)" }}
+      className="relative p-8 cursor-pointer group overflow-hidden glass hover:glass-strong border-2 border-transparent hover:border-primary/50"
+      style={{ transition: "var(--transition-bounce)" }}
     >
-      <div className="flex flex-col items-center text-center space-y-3">
-        <div className="p-4 rounded-full bg-gradient-to-br from-primary/10 to-secondary/10 group-hover:from-primary/20 group-hover:to-secondary/20 transition-all">
-          <Icon className="w-8 h-8 text-primary" />
-        </div>
-        <h3 className="font-semibold text-lg">{title}</h3>
-        <p className="text-sm text-muted-foreground">{description}</p>
+      {/* Animated Gradient Border Effect */}
+      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary via-secondary to-accent opacity-20 animate-gradient-shift" style={{ backgroundSize: '200% 200%' }}></div>
       </div>
+      
+      {/* Spotlight Effect on Hover */}
+      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+        <div className="absolute top-0 left-0 w-full h-full bg-gradient-radial from-primary/10 via-transparent to-transparent"></div>
+      </div>
+
+      <div className="relative flex flex-col items-center text-center space-y-4">
+        {/* 3D Icon with Glow Effect */}
+        <div className="relative">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary to-secondary opacity-50 blur-xl group-hover:blur-2xl transition-all duration-500"></div>
+          <div className="relative p-5 rounded-2xl bg-gradient-to-br from-primary/20 to-secondary/20 group-hover:from-primary/30 group-hover:to-secondary/30 transition-all duration-500 group-hover:scale-110 group-hover:rotate-3" style={{ transition: "var(--transition-bounce)" }}>
+            <Icon className="w-10 h-10 text-primary group-hover:text-secondary transition-colors duration-500" />
+          </div>
+        </div>
+
+        {/* Title and Description */}
+        <h3 className="font-bold text-xl text-foreground group-hover:text-primary transition-colors duration-300">{title}</h3>
+        <p className="text-sm text-muted-foreground leading-relaxed">{description}</p>
+      </div>
+
+      {/* Expanding Shadow on Hover */}
+      <div className="absolute inset-0 -z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ boxShadow: 'var(--shadow-primary)' }}></div>
     </Card>
   );
 };
