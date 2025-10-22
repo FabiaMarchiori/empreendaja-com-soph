@@ -146,7 +146,7 @@ const Index = () => {
       ) : (
         <div className="relative container mx-auto px-4 py-16 max-w-6xl">
           <div className="text-center mb-16 space-y-4 animate-slide-in-up">
-            <h2 className="text-5xl font-black text-secondary glow-text">
+            <h2 className="text-5xl font-black bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent glow-text animate-gradient-shift" style={{ backgroundSize: '200% 200%' }}>
               Como posso te ajudar hoje?
             </h2>
             <p className="text-2xl text-muted-foreground">

@@ -28,9 +28,9 @@ export const TopicCard = ({ icon: Icon, title, description, onClick }: TopicCard
       <div className="relative flex flex-col items-center text-center space-y-4">
         {/* 3D Icon with Glow Effect */}
         <div className="relative">
-          <div className="absolute inset-0 bg-secondary opacity-50 blur-xl group-hover:blur-2xl transition-all duration-500"></div>
-          <div className="relative p-5 rounded-2xl bg-secondary/20 group-hover:bg-secondary/30 transition-all duration-500 group-hover:scale-110 group-hover:rotate-3" style={{ transition: "var(--transition-bounce)" }}>
-            <Icon className="w-10 h-10 text-secondary group-hover:text-secondary glow-text transition-colors duration-500" />
+          <div className="absolute inset-0 bg-gradient-to-br from-primary via-secondary to-accent opacity-50 blur-xl group-hover:blur-2xl transition-all duration-500 animate-gradient-shift" style={{ backgroundSize: '200% 200%' }}></div>
+          <div className="relative p-5 rounded-2xl bg-gradient-to-br from-primary/20 via-secondary/20 to-accent/20 group-hover:from-primary/30 group-hover:via-secondary/30 group-hover:to-accent/30 transition-all duration-500 group-hover:scale-110 group-hover:rotate-3 animate-gradient-shift" style={{ transition: "var(--transition-bounce)", backgroundSize: '200% 200%' }}>
+            <Icon className="w-10 h-10 text-white glow-text transition-colors duration-500" />
           </div>
         </div>
 
