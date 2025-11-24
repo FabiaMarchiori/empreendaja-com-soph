@@ -1,9 +1,56 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
+
+// Input validation schema
+interface Message {
+  role: 'user' | 'assistant' | 'system';
+  content: string;
+}
+
+function validateMessages(messages: unknown): Message[] {
+  if (!Array.isArray(messages)) {
+    throw new Error("Messages must be an array");
+  }
+
+  if (messages.length === 0) {
+    throw new Error("Messages array cannot be empty");
+  }
+
+  if (messages.length > 50) {
+    throw new Error("Too many messages in conversation");
+  }
+
+  return messages.map((msg, index) => {
+    if (!msg || typeof msg !== 'object') {
+      throw new Error(`Message at index ${index} is invalid`);
+    }
+
+    const { role, content } = msg as { role?: unknown; content?: unknown };
+
+    if (!role || !['user', 'assistant', 'system'].includes(String(role))) {
+      throw new Error(`Invalid role at message ${index}`);
+    }
+
+    if (typeof content !== 'string') {
+      throw new Error(`Content must be a string at message ${index}`);
+    }
+
+    if (content.length === 0) {
+      throw new Error(`Empty content at message ${index}`);
+    }
+
+    if (content.length > 2000) {
+      throw new Error(`Message too long at index ${index}. Maximum 2000 characters.`);
+    }
+
+    return { role: role as 'user' | 'assistant' | 'system', content };
+  });
+}
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -11,11 +58,42 @@ serve(async (req) => {
   }
 
   try {
-    const { messages } = await req.json();
+    // Verify authentication
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      console.error("No authorization header provided");
+      return new Response(JSON.stringify({ error: "Authentication required" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const supabaseClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      { global: { headers: { Authorization: authHeader } } }
+    );
+
+    const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
+
+    if (authError || !user) {
+      console.error("Authentication error:", authError);
+      return new Response(JSON.stringify({ error: "Invalid authentication" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    console.log("Authenticated user:", user.id);
+
+    const requestBody = await req.json();
+    const messages = validateMessages(requestBody.messages);
+
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     
     if (!LOVABLE_API_KEY) {
-      throw new Error("LOVABLE_API_KEY is not configured");
+      console.error("LOVABLE_API_KEY is not configured");
+      throw new Error("Service configuration error");
     }
 
     const isFirstMessage = messages.length === 1;
@@ -89,6 +167,8 @@ Mantenha suas respostas objetivas mas amigáveis, e sempre pergunte se o usuári
           ...messages,
         ];
 
+    console.log("Calling Lovable AI with", messages.length, "messages");
+
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -103,47 +183,48 @@ Mantenha suas respostas objetivas mas amigáveis, e sempre pergunte se o usuári
     });
 
     if (!response.ok) {
+      console.error("AI gateway error:", response.status);
+      
       if (response.status === 429) {
-        return new Response(
-          JSON.stringify({ error: "Muitas requisições. Tente novamente em instantes." }), 
-          {
-            status: 429,
-            headers: { ...corsHeaders, "Content-Type": "application/json" },
-          }
-        );
+        return new Response(JSON.stringify({ error: "Rate limit exceeded" }), {
+          status: 429,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
       }
       if (response.status === 402) {
-        return new Response(
-          JSON.stringify({ error: "Créditos esgotados. Por favor, adicione fundos." }), 
-          {
-            status: 402,
-            headers: { ...corsHeaders, "Content-Type": "application/json" },
-          }
-        );
+        return new Response(JSON.stringify({ error: "Credits exhausted" }), {
+          status: 402,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
       }
       
-      const errorText = await response.text();
-      console.error("AI gateway error:", response.status, errorText);
-      return new Response(
-        JSON.stringify({ error: "Erro ao conectar com a IA" }), 
-        {
-          status: 500,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        }
-      );
+      return new Response(JSON.stringify({ error: "Service temporarily unavailable" }), {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
+
+    console.log("Successfully connected to AI gateway");
 
     return new Response(response.body, {
       headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
     });
-  } catch (error) {
-    console.error("chat error:", error);
-    return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : "Erro desconhecido" }), 
-      {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      }
-    );
+  } catch (e) {
+    console.error("chat error:", e);
+    
+    // Don't leak internal error details
+    const isValidationError = e instanceof Error && 
+      (e.message.includes("Messages") || 
+       e.message.includes("role") || 
+       e.message.includes("content") ||
+       e.message.includes("too long"));
+    
+    const errorMessage = isValidationError ? e.message : "Internal server error";
+    const statusCode = isValidationError ? 400 : 500;
+    
+    return new Response(JSON.stringify({ error: errorMessage }), {
+      status: statusCode,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
   }
 });

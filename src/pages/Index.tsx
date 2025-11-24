@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { TopicCard } from "@/components/TopicCard";
 import { 
@@ -9,13 +9,29 @@ import {
   ShoppingCart, 
   Palette, 
   Globe,
-  Sparkles
+  Sparkles,
+  LogIn
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { User } from "@supabase/supabase-js";
 
 const Index = () => {
   const navigate = useNavigate();
   const [showTopics, setShowTopics] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   const topics = [
     {
@@ -63,7 +79,11 @@ const Index = () => {
   ];
 
   const handleTopicClick = (topicId: string) => {
-    navigate(`/chat?topic=${topicId}`);
+    if (user) {
+      navigate(`/chat?topic=${topicId}`);
+    } else {
+      navigate("/auth");
+    }
   };
 
   return (
@@ -116,14 +136,26 @@ const Index = () => {
                 <span className="relative z-10">Começar Agora</span>
                 <div className="absolute inset-0 bg-gradient-to-r from-accent via-secondary to-primary opacity-0 group-hover:opacity-100 transition-opacity" style={{ backgroundSize: '200% 200%' }}></div>
               </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                onClick={() => navigate("/chat")}
-                className="text-lg px-10 py-7 border-2 glass hover:glass-strong font-bold"
-              >
-                Chat Livre
-              </Button>
+              {user ? (
+                <Button
+                  size="lg"
+                  variant="outline"
+                  onClick={() => navigate("/chat")}
+                  className="text-lg px-10 py-7 border-2 glass hover:glass-strong font-bold"
+                >
+                  Chat Livre
+                </Button>
+              ) : (
+                <Button
+                  size="lg"
+                  variant="outline"
+                  onClick={() => navigate("/auth")}
+                  className="text-lg px-10 py-7 border-2 glass hover:glass-strong font-bold gap-2"
+                >
+                  <LogIn className="w-5 h-5" />
+                  Fazer Login
+                </Button>
+              )}
             </div>
 
             {/* Animated Statistics Cards */}
@@ -150,7 +182,7 @@ const Index = () => {
               Como posso te ajudar hoje?
             </h2>
             <p className="text-2xl text-muted-foreground">
-              Escolha um tópico ou inicie um chat livre com a Soph
+              {user ? "Escolha um tópico ou inicie um chat livre com a Soph" : "Escolha um tópico para começar (necessário login)"}
             </p>
           </div>
 
@@ -175,10 +207,11 @@ const Index = () => {
             <Button
               variant="outline"
               size="lg"
-              onClick={() => navigate("/chat")}
-              className="border-2 glass hover:glass-strong text-lg px-8 py-6 font-bold"
+              onClick={() => navigate(user ? "/chat" : "/auth")}
+              className="border-2 glass hover:glass-strong text-lg px-8 py-6 font-bold gap-2"
             >
-              Ou inicie um chat livre
+              {user ? "Ou inicie um chat livre" : "Fazer Login para Chat Livre"}
+              {!user && <LogIn className="w-5 h-5" />}
             </Button>
           </div>
         </div>
