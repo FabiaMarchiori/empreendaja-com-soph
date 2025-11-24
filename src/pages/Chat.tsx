@@ -1,12 +1,58 @@
 import { ChatInterface } from "@/components/ChatInterface";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, LogOut } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { useEffect, useState } from "react";
+import { User } from "@supabase/supabase-js";
+import { toast } from "sonner";
 
 const Chat = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const topic = searchParams.get("topic") || undefined;
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+      setLoading(false);
+      
+      if (!session) {
+        navigate("/auth");
+      }
+    });
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+      setLoading(false);
+      
+      if (!session) {
+        navigate("/auth");
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [navigate]);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    toast.success("Você saiu da sua conta");
+    navigate("/");
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="animate-pulse text-muted-foreground">Carregando...</div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null;
+  }
 
   return (
     <div className="flex flex-col h-screen bg-background relative overflow-hidden">
@@ -14,7 +60,7 @@ const Chat = () => {
       <div className="absolute inset-0 grid-pattern opacity-30"></div>
       
       <header className="relative border-b border-border/50 glass-strong backdrop-blur-xl sticky top-0 z-10 animate-slide-in-up">
-        <div className="container mx-auto px-6 py-4 flex items-center gap-4">
+        <div className="container mx-auto px-6 py-4 flex items-center justify-between">
           <Button
             variant="ghost"
             size="icon"
@@ -23,6 +69,7 @@ const Chat = () => {
           >
             <ArrowLeft className="w-5 h-5" />
           </Button>
+          
           <div className="flex items-center gap-4">
             {/* Animated Avatar with Online Indicator */}
             <div className="relative">
@@ -43,6 +90,16 @@ const Chat = () => {
               </p>
             </div>
           </div>
+
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleLogout}
+            className="rounded-full glass hover:glass-strong transition-all"
+            title="Sair"
+          >
+            <LogOut className="w-5 h-5" />
+          </Button>
         </div>
       </header>
 

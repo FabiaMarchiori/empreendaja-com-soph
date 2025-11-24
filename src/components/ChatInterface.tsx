@@ -3,6 +3,7 @@ import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
 import { Send, Sparkles } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 type Message = { role: "user" | "assistant"; content: string };
 
@@ -46,6 +47,12 @@ export const ChatInterface = ({ selectedTopic }: ChatInterfaceProps) => {
   const sendMessage = async (text?: string) => {
     const messageText = text || input.trim();
     if (!messageText) return;
+    
+    // Validate input length (max 2000 characters)
+    if (messageText.length > 2000) {
+      toast.error("Mensagem muito longa. Máximo de 2000 caracteres.");
+      return;
+    }
 
     const userMsg: Message = { role: "user", content: messageText };
     setMessages(prev => [...prev, userMsg]);
@@ -67,15 +74,31 @@ export const ChatInterface = ({ selectedTopic }: ChatInterfaceProps) => {
     };
 
     try {
-      const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat-with-soph`;
-      const response = await fetch(CHAT_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-        },
-        body: JSON.stringify({ messages: [...messages, userMsg] }),
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        toast.error("Você precisa estar autenticado para enviar mensagens.");
+        setIsLoading(false);
+        return;
+      }
+
+      const { data, error } = await supabase.functions.invoke('chat-with-soph', {
+        body: { messages: [...messages, userMsg] }
       });
+
+      if (error) {
+        if (error.message?.includes('429')) {
+          toast.error("Muitas requisições. Aguarde um momento.");
+        } else if (error.message?.includes('402')) {
+          toast.error("Créditos esgotados.");
+        } else {
+          toast.error("Erro ao processar mensagem.");
+        }
+        setIsLoading(false);
+        return;
+      }
+
+      const response = data as Response;
 
       if (!response.ok) {
         if (response.status === 429) {
@@ -221,9 +244,10 @@ export const ChatInterface = ({ selectedTopic }: ChatInterfaceProps) => {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Digite sua mensagem..."
+              placeholder="Digite sua mensagem (máx. 2000 caracteres)..."
               className="relative resize-none min-h-[70px] max-h-[140px] glass border-2 focus:border-primary/50 transition-all duration-300"
               disabled={isLoading}
+              maxLength={2000}
             />
           </div>
           <Button
