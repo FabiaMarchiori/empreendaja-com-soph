@@ -343,9 +343,13 @@ div[style*="Edit with Lovable"],
   pointer-events: none;
 }
 
-/* Card Floating Animation */
+/* Card Floating Animation - Combina stagger-in + float */
 .card-floating {
-  animation: card-float 4s ease-in-out infinite;
+  opacity: 0;
+  animation: 
+    stagger-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards,
+    card-float 4s ease-in-out infinite;
+  animation-delay: var(--stagger-delay, 0s), calc(var(--stagger-delay, 0s) + 0.6s);
 }
 
 /* Hover Scale Effect para Cards */
@@ -359,10 +363,4 @@ div[style*="Edit with Lovable"],
   box-shadow: 
     0 25px 50px -12px hsl(var(--primary) / 0.4),
     0 0 30px hsl(var(--secondary) / 0.2);
-}
-
-/* Stagger Animation Container */
-.stagger-container > * {
-  opacity: 0;
-  animation: stagger-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
