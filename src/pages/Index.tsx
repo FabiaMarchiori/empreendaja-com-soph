@@ -241,10 +241,8 @@ const Index = () => {
             {topics.map((topic, index) => (
               <div 
                 key={topic.id}
-                className="card-floating"
-                style={{ 
-                  '--stagger-delay': `${index * 0.15}s`
-                } as React.CSSProperties}
+                className="animate-scale-in"
+                style={{ animationDelay: `${index * 0.1}s` }}
               >
                 <TopicCard
                   icon={topic.icon}
