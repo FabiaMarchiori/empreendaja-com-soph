@@ -171,7 +171,7 @@ const Index = () => {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="glass-premium border-white/10 min-w-[180px]">
-              <DropdownMenuItem onClick={() => navigate("/auth")} className="cursor-pointer text-white hover:text-white">
+              <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-white hover:text-white">
                 <LogIn className="mr-2 h-4 w-4" />
                 Voltar ao Login
               </DropdownMenuItem>
