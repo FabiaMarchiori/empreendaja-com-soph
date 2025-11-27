@@ -11,8 +11,17 @@ import {
   Globe,
   Sparkles,
   LogIn,
-  MessageCircle
+  MessageCircle,
+  User as UserIcon,
+  LogOut
 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
@@ -106,6 +115,13 @@ const Index = () => {
     }
   };
 
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setUser(null);
+    setShowTopics(false);
+    navigate("/");
+  };
+
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
       {/* Aurora Background Effect */}
@@ -144,6 +160,30 @@ const Index = () => {
       
       {/* Noise Overlay */}
       <div className="noise-overlay"></div>
+
+      {/* Profile Menu - Top Right */}
+      {user && (
+        <div className="absolute top-4 right-4 sm:top-6 sm:right-6 z-50">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="glass-premium rounded-full w-10 h-10 sm:w-12 sm:h-12 hover:scale-105 transition-transform">
+                <UserIcon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="glass-premium border-white/10 min-w-[180px]">
+              <DropdownMenuItem onClick={() => navigate("/auth")} className="cursor-pointer text-white hover:text-white">
+                <LogIn className="mr-2 h-4 w-4" />
+                Voltar ao Login
+              </DropdownMenuItem>
+              <DropdownMenuSeparator className="bg-white/10" />
+              <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-400 hover:text-red-400 focus:text-red-400">
+                <LogOut className="mr-2 h-4 w-4" />
+                Sair do App
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      )}
       
       {!showTopics ? (
         <div className="relative flex flex-col items-center justify-center min-h-screen p-4 sm:p-6 text-center">
@@ -253,6 +293,21 @@ const Index = () => {
               </div>
             ))}
           </div>
+
+          {/* Footer Institucional */}
+          <footer className="relative py-8 mt-16 border-t border-white/10">
+            <div className="container mx-auto px-4 text-center">
+              <p className="text-sm sm:text-base text-white/60 font-medium">
+                Material desenvolvido por{" "}
+                <span className="text-white font-semibold">EmpreendeJá com Soph</span>
+                {" "}— Inteligência que impulsiona negócios
+              </p>
+              <div className="flex items-center justify-center gap-1 mt-2">
+                <Sparkles className="w-4 h-4 text-primary" />
+                <span className="text-xs text-white/40">Powered by AI</span>
+              </div>
+            </div>
+          </footer>
         </div>
       )}
     </div>
