@@ -237,15 +237,14 @@ const Index = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-2 gap-3 sm:gap-4 md:gap-6 lg:grid-cols-3 mb-12 stagger-container">
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 md:gap-6 lg:grid-cols-3 mb-12">
             {topics.map((topic, index) => (
               <div 
                 key={topic.id}
                 className="card-floating"
                 style={{ 
-                  animationDelay: `${index * 0.3}s`,
-                  animationDuration: '4s'
-                }}
+                  '--stagger-delay': `${index * 0.15}s`
+                } as React.CSSProperties}
               >
                 <TopicCard
                   icon={topic.icon}
