@@ -232,7 +232,7 @@ const Index = () => {
             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent glow-text animate-gradient-shift" style={{ backgroundSize: '200% 200%' }}>
               Como posso te ajudar hoje?
             </h2>
-            <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-muted-foreground">
+            <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-white font-medium drop-shadow-lg">
               {user ? "Escolha um tópico ou inicie um chat livre com a Soph" : "Escolha um tópico para começar (necessário login)"}
             </p>
           </div>

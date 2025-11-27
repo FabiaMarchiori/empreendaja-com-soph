@@ -38,7 +38,7 @@ export const TopicCard = ({ icon: Icon, title, description, onClick }: TopicCard
         </div>
 
         {/* Title and Description */}
-        <h3 className="font-bold text-sm sm:text-base md:text-lg lg:text-xl text-foreground group-hover:text-primary transition-colors duration-300">{title}</h3>
+        <h3 className="font-bold text-sm sm:text-base md:text-lg lg:text-xl text-white transition-colors duration-300">{title}</h3>
         <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed line-clamp-2">{description}</p>
       </div>
 
