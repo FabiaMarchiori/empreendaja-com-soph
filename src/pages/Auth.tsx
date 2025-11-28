@@ -25,7 +25,7 @@ export default function Auth() {
   }, [navigate]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 sm:p-6 bg-gradient-to-br from-background via-background/95 to-background">
+    <div className="min-h-screen flex items-center justify-center p-4 sm:p-6 bg-[#0A0B1E]">
       <div className="w-full max-w-md">
         <div className="text-center mb-8 animate-scale-in">
           <div className="relative inline-block mb-6">
