@@ -28,24 +28,18 @@ export default function Auth() {
       <div className="w-full max-w-md">
         <div className="text-center mb-8 animate-scale-in">
           <div className="mb-6 flex justify-center">
-            <video
-              autoPlay
-              muted
-              loop
-              playsInline
-              className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 object-contain"
+            <iframe
+              src="https://www.youtube.com/embed/PKUhsUbrqcQ?autoplay=1&mute=1&loop=1&controls=0&playlist=PKUhsUbrqcQ&modestbranding=1&showinfo=0&rel=0&playsinline=1"
+              className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 object-contain rounded-2xl"
               style={{
                 background: 'transparent',
                 border: 'none',
                 boxShadow: 'none',
                 outline: 'none'
               }}
-            >
-              <source 
-                src="https://www.dropbox.com/scl/fi/xc1q3ivpss1yvfs2mf5s1/Untitled-design.mp4?rlkey=5hz8rhvh4jkv92ysg508zu58u&raw=1" 
-                type="video/mp4" 
-              />
-            </video>
+              allow="autoplay; encrypted-media"
+              allowFullScreen={false}
+            />
           </div>
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
             Empreenda Já
