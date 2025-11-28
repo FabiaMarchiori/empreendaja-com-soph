@@ -44,7 +44,7 @@ export default function Auth() {
               }}
             >
               <source 
-                src="https://frtnvbhmrtuelztgumou.supabase.co/storage/v1/object/public/videos/soph-welcome.mp4" 
+                src="https://frtnvbhmrtuelztgumou.supabase.co/storage/v1/object/public/videos/Untitled%20design.mp4" 
                 type="video/mp4" 
               />
               Seu navegador não suporta vídeos.
