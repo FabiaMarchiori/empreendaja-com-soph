@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
 import { Send, Sparkles, ExternalLink } from "lucide-react";
@@ -11,36 +12,70 @@ interface ChatInterfaceProps {
   selectedTopic?: string;
 }
 
-// Função para detectar e renderizar links como botões
-const renderMessageContent = (content: string) => {
-  const urlRegex = /(https?:\/\/[^\s]+)/g;
-  const parts = content.split(urlRegex);
-  
-  return parts.map((part, index) => {
-    if (part.match(urlRegex)) {
-      return (
-        <a
-          key={index}
-          href={part}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 my-2 px-3 py-2 sm:px-4 sm:py-2.5 bg-gradient-to-r from-primary via-secondary to-accent text-white font-medium rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 text-sm sm:text-base"
-          style={{ backgroundSize: '200% 200%' }}
-        >
-          <ExternalLink className="w-4 h-4" />
-          Acessar Ferramenta
-        </a>
-      );
-    }
-    return <span key={index}>{part}</span>;
-  });
+// Mapeamento de URLs externas para slugs internos
+const urlToSlugMap: Record<string, string> = {
+  'https://crieseulogo.lovable.app': 'logo',
+  'https://abrindoseumei.lovable.app': 'mei',
+  'https://crieseudominioesite.lovable.app': 'website',
+  'https://vendendonosmarketplaces.lovable.app': 'marketplace',
+  'https://empreende-ja-soph.lovable.app': 'brand',
+};
+
+// Função para detectar e renderizar links como botões internos
+const createRenderMessageContent = (navigate: ReturnType<typeof useNavigate>) => {
+  return (content: string) => {
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    const parts = content.split(urlRegex);
+    
+    return parts.map((part, index) => {
+      if (part.match(urlRegex)) {
+        // Limpar a URL de pontuação no final
+        const cleanUrl = part.replace(/[.,;!?)\]]+$/, '');
+        const slug = urlToSlugMap[cleanUrl];
+        
+        if (slug) {
+          // Usar navegação interna para ferramentas protegidas
+          return (
+            <button
+              key={index}
+              onClick={() => navigate(`/tool/${slug}`)}
+              className="inline-flex items-center gap-2 my-2 px-3 py-2 sm:px-4 sm:py-2.5 bg-gradient-to-r from-primary via-secondary to-accent text-white font-medium rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 text-sm sm:text-base cursor-pointer"
+              style={{ backgroundSize: '200% 200%' }}
+            >
+              <ExternalLink className="w-4 h-4" />
+              Acessar Ferramenta
+            </button>
+          );
+        }
+        
+        // Para outras URLs, manter comportamento externo
+        return (
+          <a
+            key={index}
+            href={cleanUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 my-2 px-3 py-2 sm:px-4 sm:py-2.5 bg-gradient-to-r from-primary via-secondary to-accent text-white font-medium rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 text-sm sm:text-base"
+            style={{ backgroundSize: '200% 200%' }}
+          >
+            <ExternalLink className="w-4 h-4" />
+            Acessar Link
+          </a>
+        );
+      }
+      return <span key={index}>{part}</span>;
+    });
+  };
 };
 
 export const ChatInterface = ({ selectedTopic }: ChatInterfaceProps) => {
+  const navigate = useNavigate();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  
+  const renderMessageContent = createRenderMessageContent(navigate);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
