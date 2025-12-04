@@ -102,20 +102,20 @@ const Tool = () => {
   return (
     <div className="h-screen flex flex-col bg-background">
       {/* Header */}
-      <header className="flex items-center justify-between p-3 sm:p-4 border-b border-border/50 glass-strong backdrop-blur-xl">
+      <header className="flex items-center justify-between px-3 py-2 border-b border-border/50 glass-strong backdrop-blur-xl">
         <Button
           variant="ghost"
           size="sm"
           onClick={() => navigate("/")}
-          className="rounded-full glass hover:glass-strong transition-all"
+          className="rounded-full glass hover:glass-strong transition-all px-2 py-1"
         >
-          <ArrowLeft className="w-5 h-5 mr-2" />
+          <ArrowLeft className="w-4 h-4 mr-1" />
           Voltar
         </Button>
-        <h1 className="text-sm sm:text-base font-semibold bg-gradient-to-r from-[#C372FF] to-[#4AAEFF] bg-clip-text text-transparent">
+        <h1 className="text-sm font-semibold bg-gradient-to-r from-[#C372FF] to-[#4AAEFF] bg-clip-text text-transparent">
           {toolName}
         </h1>
-        <div className="w-20" /> {/* Spacer for centering */}
+        <div className="w-16" />
       </header>
 
       {/* Iframe Container */}
