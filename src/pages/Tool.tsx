@@ -100,7 +100,7 @@ const Tool = () => {
   }
 
   return (
-    <div className="h-screen flex flex-col bg-background" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+    <div className="h-screen flex flex-col bg-background">
       {/* Header */}
       <header className="flex items-center justify-between p-3 sm:p-4 border-b border-border/50 glass-strong backdrop-blur-xl">
         <Button
@@ -119,7 +119,7 @@ const Tool = () => {
       </header>
 
       {/* Iframe Container */}
-      <main className="flex-1 relative pb-safe">
+      <main className="flex-1 relative tool-iframe-container">
         {toolUrl && (
           <iframe
             src={toolUrl}
@@ -127,7 +127,6 @@ const Tool = () => {
             title={toolName}
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
-            style={{ height: 'calc(100% - env(safe-area-inset-bottom, 0px))' }}
           />
         )}
       </main>
