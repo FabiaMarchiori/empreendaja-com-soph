@@ -618,12 +618,22 @@ div[class*='fixed']:has(a[href*='lovable.dev']) {
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
+/* Container para iframes em ferramentas - Android fallback + iOS safe-area */
+.tool-iframe-container {
+  padding-bottom: 56px; /* Fallback fixo para Android */
+  box-sizing: border-box;
+}
+
 @supports (padding-bottom: env(safe-area-inset-bottom)) {
   .tool-iframe-container {
-    padding-bottom: calc(env(safe-area-inset-bottom) + 16px);
+    padding-bottom: max(56px, calc(env(safe-area-inset-bottom) + 16px));
   }
-  
-  .safe-area-bottom {
-    padding-bottom: env(safe-area-inset-bottom, 20px);
-  }
+}
+
+.tool-iframe-container iframe {
+  height: 100% !important;
+}
+
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 20px);
 }
